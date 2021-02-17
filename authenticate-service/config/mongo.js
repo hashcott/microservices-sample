@@ -1,15 +1,11 @@
 const mongoose = require("mongoose")
-const PORT = process.env.PORT || 3000
 
-module.exports.MongoDB = async (app) => {
+module.exports.MongoDB = async () => {
     try {
         await mongoose.connect("mongodb://mongodb:27017/authenticate-service", {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true
-        })
-        app.listen(PORT,() => {
-            console.log(`SERVER RUNING ON ${PORT}`)
         })
         console.log("Connected to mongodb...");
     } catch (error) {
