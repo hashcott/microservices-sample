@@ -4,8 +4,6 @@ services:
 
   consul-agent-1: &consul-agent
     image: consul:latest
-    networks:
-      - consul-demo
     command: "agent -retry-join consul-server-bootstrap -client 0.0.0.0"
 
   consul-agent-2:
@@ -29,6 +27,3 @@ services:
       - "8600:8600"
       - "8600:8600/udp"
     command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0"
-
-networks:
-  consul-demo:
