@@ -15,9 +15,9 @@ if(process.env.NODE_ENV === 'development') {
 
 app.get("/" , (req, res) => res.json({ msg : "Thank for request" }))
 app.use("/", authRoutes)
-app.get("/test-authenicate", [requireAuth, checkUser], (req, res) => {
+app.get("/test-authenticate", [requireAuth, checkUser], (req, res) => {
     if(res.locals.user) {
-        res.json({ msg : "Authenicated !" })
+        res.json({ msg : "Authenticated !" })
     } else {
         res.status(401).json({ msg : "Account was removed" })
     }

@@ -43,7 +43,7 @@ const createToken = (id) => {
   });
 };
 
-module.exports.registry_post = async (req, res) => {
+module.exports.register_post = async (req, res) => {
   const { email, password } = req.body;
 
   try {

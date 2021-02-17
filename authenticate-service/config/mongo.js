@@ -3,7 +3,7 @@ const PORT = process.env.PORT || 3000
 
 module.exports.MongoDB = async (app) => {
     try {
-        await mongoose.connect("mongodb://mongodb:27017/authenicate-service", {
+        await mongoose.connect("mongodb://mongodb:27017/authenticate-service", {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true
