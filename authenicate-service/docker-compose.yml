@@ -2,7 +2,7 @@ version: "3"
 
 services: 
   node:
-    container_name: microservice-apis/authenicate-service
+    container_name: authenicate-service
     image: nodeapp
     build: 
       context: .

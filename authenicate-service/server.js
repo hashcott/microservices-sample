@@ -14,7 +14,7 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 app.get("/" , (req, res) => res.json({ msg : "Thank for request" }))
-app.use("/authenicate", authRoutes)
+app.use("/", authRoutes)
 app.get("/test-authenicate", [requireAuth, checkUser], (req, res) => {
     if(res.locals.user) {
         res.json({ msg : "Authenicated !" })
