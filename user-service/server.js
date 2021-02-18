@@ -19,8 +19,15 @@ app.use(expressWinston.logger({
 app.use(cors())
 app.use(express.json());
 
-app.get("/get-profile", (req, res) => {
-    res.json({ msg : "hello" })
+app.get("/get-profile", async (req, res) => {
+    console.log("helloooooo");
+    try {
+        let services = await consul.lookupServiceWithConsul();
+        res.json({ services })
+    } catch (error) {
+        res.json({ error })
+    }
+
 })
 
 // Place the express-winston errorLogger after the router.

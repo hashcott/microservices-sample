@@ -11,12 +11,21 @@ eventEmitter.once('SERVER_STARTED', () => {
   consul.agent.service.register({
     name: process.env.npm_package_name,
     port: parseFloat(process.env.PORT || 3000),
-    address : `${ip.address()}`
+    check: {
+      ttl: '5s',
+      deregister_critical_service_after: '1m'
+    },
+    address: `${ip.address()}`
   }, function (err, data, res) {
     if (err) {
       logger.error(err.message)
     } else {
       logger.info(process.env.npm_package_name + ' Registered with Consul')
+      setInterval(() => {
+        consul.agent.check.pass({id:`service:${process.env.npm_package_name}`}, err => {
+            if (err) throw new Error(err);
+        });
+    }, 5 * 1000);
     }
   })
 })
@@ -31,4 +40,12 @@ eventEmitter.once('SERVER_STOPPING', () => {
   })
 })
 
-module.exports = consul
+const lookupServiceWithConsul = () => new Promise((rej, res) => {
+  consul.agent.service.list((err, data) => {
+    if (err) rej(err)
+    res(data)
+  })
+})
+
+
+module.exports = { lookupServiceWithConsul }
