@@ -25,9 +25,9 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.json({ msg: "Thank for request" }))
 app.use("/", authRoutes)
-app.get("/test-authenticate", [requireAuth, checkUser], (req, res) => {
+app.get("/me", [requireAuth, checkUser], (req, res) => {
     if (res.locals.user) {
-        res.json({ msg: "Authenticated !" })
+        res.json({ user : res.locals.user})
     } else {
         res.status(401).json({ msg: "Account was removed" })
     }

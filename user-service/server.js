@@ -23,7 +23,8 @@ app.get("/get-profile", async (req, res) => {
     try {
         let services = await consul.lookupServiceWithConsul();
         // findBestService()
-        const serverService = services[services.indexOf({ ID : "authenticate-service" })]
+        console.log(services);
+        const serverService = services["authenticate-service"]
         res.json({ serverService })
     } catch (error) {
         res.json({ error })
