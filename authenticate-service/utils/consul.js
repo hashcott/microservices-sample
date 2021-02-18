@@ -40,12 +40,11 @@ eventEmitter.once('SERVER_STOPPING', () => {
   })
 })
 
-const lookupServiceWithConsul = () => new Promise((rej, res) => {
+const lookupServiceWithConsul = () => new Promise((res, rej) => {
   consul.agent.service.list((err, data) => {
-    if (err) rej(err)
+    if(err) rej(err)
     res(data)
   })
 })
-
 
 module.exports = { lookupServiceWithConsul }

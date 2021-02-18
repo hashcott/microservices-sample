@@ -20,10 +20,11 @@ app.use(cors())
 app.use(express.json());
 
 app.get("/get-profile", async (req, res) => {
-    console.log("helloooooo");
     try {
         let services = await consul.lookupServiceWithConsul();
-        res.json({ services })
+        // findBestService()
+        const serverService = services[services.indexOf({ ID : "authenticate-service" })]
+        res.json({ serverService })
     } catch (error) {
         res.json({ error })
     }
