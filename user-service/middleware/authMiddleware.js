@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const requireAuth = (req, res, next) => {
   const token = req.header("x-auth-token");
@@ -26,7 +27,8 @@ const checkUser = (req, res, next) => {
         res.locals.user = null;
         next();
       } else {
-        // res.locals.user = user;
+        let user = await User.findById(decodedToken.id);
+        res.locals.user = user;
         next();
       }
     });

@@ -1,19 +1,15 @@
 // Dependencies
 const express = require("express")
-const { MongoDB } = require("./config/mongo")
-const authRoutes = require("./routes/authRoutes")
 const { checkUser, requireAuth } = require("./middleware/authMiddleware")
 const cors = require('cors')
 const expressWinston = require('express-winston')
 const logger = require('./utils/logger')
-
 const eventEmitter = require('./utils/events')
 const consul = require('./utils/consul')
 
 // Init
 const app = express();
-MongoDB()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 
 // middleware
 // Place the express-winston logger before the router.
@@ -23,14 +19,17 @@ app.use(expressWinston.logger({
 app.use(cors())
 app.use(express.json());
 
-app.get("/", (req, res) => res.json({ msg: "Thank for request" }))
-app.use("/", authRoutes)
-app.get("/me", [requireAuth, checkUser], (req, res) => {
-    if (res.locals.user) {
-        res.json({ user : res.locals.user})
-    } else {
-        res.status(401).json({ msg: "Account was removed" })
+app.get("/get-profile", async (req, res) => {
+    try {
+        let services = await consul.lookupServiceWithConsul();
+        // findBestService()
+        console.log(services);
+        const serverService = services["authenticate-service"]
+        res.json({ serverService })
+    } catch (error) {
+        res.json({ error })
     }
+
 })
 
 // Place the express-winston errorLogger after the router.

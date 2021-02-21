@@ -10,22 +10,22 @@ const consul = require('consul')({
 eventEmitter.once('SERVER_STARTED', () => {
   consul.agent.service.register({
     name: process.env.npm_package_name,
+    port: parseFloat(process.env.PORT || 3000),
     check: {
-        ttl: '5s',
-        deregister_critical_service_after: '1m'
+      ttl: '5s',
+      deregister_critical_service_after: '1m'
     },
-    port: parseFloat(process.env.PORT || 3001),
-    address : `${ip.address()}`
+    address: `${ip.address()}`
   }, function (err, data, res) {
     if (err) {
       logger.error(err.message)
     } else {
       logger.info(process.env.npm_package_name + ' Registered with Consul')
       setInterval(() => {
-        consul.agent.check.pass({ id: `service:${process.env.npm_package_name}` }, err => {
-          if (err) throw new Error(err);
+        consul.agent.check.pass({id:`service:${process.env.npm_package_name}`}, err => {
+            if (err) throw new Error(err);
         });
-      }, 5 * 1000);
+    }, 5 * 1000);
     }
   })
 })
@@ -46,6 +46,5 @@ const lookupServiceWithConsul = () => new Promise((res, rej) => {
     res(data)
   })
 })
-
 
 module.exports = { lookupServiceWithConsul }
