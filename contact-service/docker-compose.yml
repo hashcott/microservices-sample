@@ -2,7 +2,7 @@ version: "3"
 
 services: 
   node:
-    container_name: user-service
+    container_name: contact-service
     image: nodeapp
     build: 
       context: .

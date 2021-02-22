@@ -1,13 +1,14 @@
 // Dependencies
 const express = require("express")
 const { MongoDB } = require("./config/mongo")
-const authRoutes = require("./routes/authRoutes")
-const { checkUser, requireAuth } = require("./middleware/authMiddleware")
+const userRoutes = require("./routes/userRoutes")
 const cors = require('cors')
 const expressWinston = require('express-winston')
 const logger = require('./utils/logger')
 
 const eventEmitter = require('./utils/events')
+
+// Run - consul
 const consul = require('./utils/consul')
 
 // Init
@@ -23,15 +24,8 @@ app.use(expressWinston.logger({
 app.use(cors())
 app.use(express.json());
 
-app.get("/", (req, res) => res.json({ msg: "Thank for request" }))
-app.use("/", authRoutes)
-app.get("/me", [requireAuth, checkUser], (req, res) => {
-    if (res.locals.user) {
-        res.json({ user : res.locals.user})
-    } else {
-        res.status(401).json({ msg: "Account was removed" })
-    }
-})
+app.get("/", (req, res) => res.json({ msg: "Thank for using " }))
+app.use("/", userRoutes)
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinston.errorLogger({
