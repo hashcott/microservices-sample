@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const consul = require('../utils/consul');
+const axios = require("axios");
 const requireAuth = (req, res, next) => {
   const token = req.header("x-auth-token");
 
@@ -24,17 +25,28 @@ const checkUser = (req, res, next) => {
     jwt.verify(token, 'hanh-test', async (err, decodedToken) => {
       if (err) {
         res.locals.user = null;
-        try {
-          let services = await consul.lookupServiceWithConsul();
-          const serverService = services["user-service"]
-          res.json({ serverService })
-        } catch (error) {
-          res.json({ errors : error.message })
-        }
         next();
       } else {
-        http
-        // res.locals.user = user;
+        try {
+          let services = await consul.lookupServiceWithConsul();
+          const userService = services["user-service"]
+          const serverService = { ...userService }
+
+          const addressServer = serverService.Address + ":" + serverService.Port
+          try {
+            const resUser = await axios.get(`http://${addressServer}/profile`, {
+              headers: {
+                "x-auth-token": `${token}`
+              }
+            })
+            const user = resUser.data;
+            res.locals.user = user;
+          } catch (error) {
+            res.json({ errors: error.message })
+          }
+        } catch (error) {
+          res.json({ errors: error.message })
+        }
         next();
       }
     });
