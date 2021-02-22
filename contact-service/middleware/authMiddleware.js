@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const consul = require('../utils/consul');
 const requireAuth = (req, res, next) => {
   const token = req.header("x-auth-token");
 
@@ -7,13 +7,13 @@ const requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, 'hanh-test', (err, decodedToken) => {
       if (err) {
-        res.status(400).json({ errors : "Token is invaid !" });
+        res.status(400).json({ errors: "Token is invaid !" });
       } else {
         next();
       }
     });
   } else {
-    res.status(400).json({ errors : "Token not exists !" });
+    res.status(400).json({ errors: "Token not exists !" });
   }
 };
 
@@ -24,8 +24,16 @@ const checkUser = (req, res, next) => {
     jwt.verify(token, 'hanh-test', async (err, decodedToken) => {
       if (err) {
         res.locals.user = null;
+        try {
+          let services = await consul.lookupServiceWithConsul();
+          const serverService = services["user-service"]
+          res.json({ serverService })
+        } catch (error) {
+          res.json({ errors : error.message })
+        }
         next();
       } else {
+        http
         // res.locals.user = user;
         next();
       }

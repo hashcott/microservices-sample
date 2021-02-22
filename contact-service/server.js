@@ -1,10 +1,10 @@
 // Dependencies
 const express = require("express")
-const { checkUser, requireAuth } = require("./middleware/authMiddleware")
 const cors = require('cors')
 const expressWinston = require('express-winston')
 const logger = require('./utils/logger')
 const eventEmitter = require('./utils/events')
+const contactRoutes = require('./routes/contactRoutes')
 const consul = require('./utils/consul')
 
 // Init
@@ -19,18 +19,7 @@ app.use(expressWinston.logger({
 app.use(cors())
 app.use(express.json());
 
-app.get("/get-profile", async (req, res) => {
-    try {
-        let services = await consul.lookupServiceWithConsul();
-        // findBestService()
-        console.log(services);
-        const serverService = services["authenticate-service"]
-        res.json({ serverService })
-    } catch (error) {
-        res.json({ error })
-    }
-
-})
+app.use("/contact", contactRoutes)
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinston.errorLogger({
