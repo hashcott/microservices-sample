@@ -3,16 +3,16 @@ version: "3"
 services: 
   node:
     container_name: contact-service
-    image: nodeapp
+    image: nodeapp-contact
     build: 
       context: .
       dockerfile: Dockerfile
     ports: 
-      - "3000:3000"
+      - "3001:3001"
     depends_on: 
       - mongodb
   mongodb:
-    container_name: mongodb
+    container_name: mongodb-contact
     image: mongo
     ports: 
-      - "27017:27017"
+      - "9999:27017"

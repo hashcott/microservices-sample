@@ -6,10 +6,12 @@ const logger = require('./utils/logger')
 const eventEmitter = require('./utils/events')
 const contactRoutes = require('./routes/contactRoutes')
 const consul = require('./utils/consul')
+const { MongoDB } = require("./config/mongo")
 
 // Init
 const app = express();
 const PORT = process.env.PORT || 3001
+MongoDB()
 
 // middleware
 // Place the express-winston logger before the router.

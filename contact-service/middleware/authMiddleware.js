@@ -33,17 +33,16 @@ const checkUser = (req, res, next) => {
           const serverService = { ...userService }
 
           const addressServer = serverService.Address + ":" + serverService.Port
-          try {
-            const resUser = await axios.get(`http://${addressServer}/profile`, {
-              headers: {
-                "x-auth-token": `${token}`
-              }
-            })
-            const user = resUser.data;
-            res.locals.user = user;
-          } catch (error) {
-            res.json({ errors: error.message })
-          }
+          console.log("hello");
+          const resUser = await axios.get(`http://${addressServer}/profile`, {
+            headers: {
+              "x-auth-token": `${token}`
+            }
+          })
+          console.log("hello");
+          const user = resUser.data;
+          console.log(user);
+          res.locals.user = user;
         } catch (error) {
           res.json({ errors: error.message })
         }

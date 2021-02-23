@@ -10,6 +10,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-winston": "^4.0.5",
+    "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
     "validator": "^13.5.2",

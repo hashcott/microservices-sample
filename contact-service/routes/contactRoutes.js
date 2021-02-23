@@ -2,7 +2,9 @@ const router = require("express").Router();
 const contactController = require("../controllers/contactControllers")
 const { checkUser, requireAuth } = require("../middleware/authMiddleware")
 
-router.get("/", [checkUser, requireAuth] , (req, res) => res.json({ msg : "hello" }))
-// router.post("/login" , contactController.login_post)
+router.get("/" , contactController.contact_get)
+router.post("/" , contactController.contact_post)
+router.delete("/:id" , contactController.contact_delete)
+router.put("/:id" , contactController.contact_put)
 
 module.exports = router;

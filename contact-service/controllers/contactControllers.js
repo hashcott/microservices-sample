@@ -1,39 +1,6 @@
 const User = require("../models/Contact");
 const jwt = require('jsonwebtoken');
-
-// handle errors
-const handleErrors = (err) => {
-  console.log(err.message, err.code);
-  let errors = { email: '', password: '' };
-
-  // incorrect email
-  if (err.message === 'Incorrect email') {
-    errors.email = 'That email is not registered';
-  }
-
-  // incorrect password
-  if (err.message === 'Incorrect password') {
-    errors.password = 'That password is incorrect';
-  }
-
-  // duplicate email error
-  if (err.code === 11000) {
-    errors.email = 'that email is already registered';
-    return errors;
-  }
-
-  // validation errors
-  if (err.message.includes('user validation failed')) {
-    // console.log(err);
-    Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      // console.log(properties);
-      errors[properties.path] = properties.message;
-    });
-  }
-
-  return errors;
-}
+const { isMongoId } = require('validator')
 
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
@@ -43,33 +10,73 @@ const createToken = (id) => {
   });
 };
 
-module.exports.register_post = async (req, res) => {
-  const { email, password } = req.body;
-
+module.exports.contact_post = async (req, res) => {
+  const { socialName, socialLink } = req.body;
   try {
-    const user = await User.create({ email, password });
-    const token = createToken(user._id);
-    res.status(201).json({ token });
+    const userID = req.body._id;
+    const user = await User.findOne({ userID })
+    if (!user) {
+      const newUser = new User({
+        userID,
+        contact: [{
+          socialName, socialLink
+        }]
+      })
+      await newUser.save()
+      res.json({ newUser })
+    }
+    user.contact.push({ socialName, socialLink })
+    await user.save()
+    res.json({ user })
+  } catch (error) {
+    res.status(500).json({ errors: error.message })
   }
-  catch(err) {
-    const errors = handleErrors(err);
-    res.status(400).json({ errors });
-  }
- 
 }
 
-module.exports.login_post = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.login(email, password);
-    const token = createToken(user._id);
-    res.status(200).json({ token });
-  } 
-  catch (err) {
-    const errors = handleErrors(err);
-    res.status(400).json({ errors });
+module.exports.contact_get = async (req, res) => {
+  const userID = req.params?.id;
+  if (userID && isMongoId(userID)) {
+    try {
+      const contacts = await User.findOne({ userID })
+      res.json({ ...contacts._doc })
+    } catch (error) {
+      res.json({ errors: error.message })
+    }
+  } else {
+    res.status(400).json({ errors: "Please enter id of contact" })
   }
-
 }
 
+module.exports.contact_put = async (req, res) => {
+  const idContact = req.params?.id;
+  const { socialName, socialLink } = req.body;
+  if (idContact && isMongoId(idContact)) {
+    try {
+      const contacts = await User.findOne({ userID: req.body._id })
+      const contactUser = contacts.contact.pull({ _id: idContact })
+      contacts.contact.push({ ...contactUser, socialName, socialLink})
+      await contacts.save();
+      res.json({ msg: "Delete contact successfully" })
+    } catch (error) {
+      res.status(500).json({ errors: error.message })
+    }
+  } else {
+    res.status(400).json({ errors: "Please enter id of contact" })
+  }
+}
+
+module.exports.contact_delete = async (req, res) => {
+  const idContact = req.params?.id;
+  if (idContact && isMongoId(idContact)) {
+    try {
+      const contacts = await User.findOne({ userID: req.body._id })
+      contacts.contact.pull({ _id: idContact })
+      await contacts.save();
+      res.json({ msg: "Delete contact successfully" })
+    } catch (error) {
+      res.status(500).json({ errors: error.message })
+    }
+  } else {
+    res.status(400).json({ errors: "Please enter id of contact" })
+  }
+}
