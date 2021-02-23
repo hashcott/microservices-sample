@@ -1,5 +1,9 @@
 version: "3"
 
+networks: 
+  my-net:
+    driver: bridge
+
 services: 
   node:
     container_name: contact-service
@@ -9,10 +13,16 @@ services:
       dockerfile: Dockerfile
     ports: 
       - "3001:3001"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
     depends_on: 
       - mongodb
+    networks: 
+      - my-net
   mongodb:
     container_name: mongodb-contact
     image: mongo
     ports: 
       - "9999:27017"
+    networks: 
+      - my-net

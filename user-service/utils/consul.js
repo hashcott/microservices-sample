@@ -15,7 +15,7 @@ eventEmitter.once('SERVER_STARTED', () => {
       ttl: '5s',
       deregister_critical_service_after: '1m'
     },
-    address: `${ip.address()}`
+    address: `${process.env.SERVER_ID}`
   }, function (err, data, res) {
     if (err) {
       logger.error(err.message)
