@@ -21,7 +21,7 @@ app.use(expressWinston.logger({
 app.use(cors())
 app.use(express.json());
 
-app.use("/contact", contactRoutes)
+app.use("/api/v1/contacts", contactRoutes)
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinston.errorLogger({

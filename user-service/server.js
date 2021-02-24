@@ -25,7 +25,7 @@ app.use(cors())
 app.use(express.json());
 
 app.get("/", (req, res) => res.json({ msg: "Thank for using " }))
-app.use("/", userRoutes)
+app.use("/api/v1/users", userRoutes)
 
 // Place the express-winston errorLogger after the router.
 app.use(expressWinston.errorLogger({

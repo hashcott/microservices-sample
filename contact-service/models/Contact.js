@@ -1,20 +1,29 @@
 const mongoose = require('mongoose');
 const { isMongoId } = require('validator')
-const bcrypt = require("bcrypt")
+// const bcrypt = require("bcrypt")
 
 const socialSchema = new mongoose.Schema({
-    socialName: {
+    type: {
         type: String,
-        required: [true, "Please enter Social name"]
+        required: [true, "Please enter type"]
     },
-    socialLink: {
+    accountName: {
         type: String,
-        required: [true, "Please enter socialLink"]
+        required: [true, "Please enter account name"]
+    },
+    username: {
+        type: String,
+        required: [true, "Please enter username"]
+    },
+    url: {
+        type: String,
+        required: [true, "Please enter url"]
     }
+    
 })
 
 const contactSchema = new mongoose.Schema({
-    userID: {
+    userId: {
         type: String,
         require: [true, "Please enter ObjectId User"],
         validate: [isMongoId, 'Please enter a valid ObjectId User !']
