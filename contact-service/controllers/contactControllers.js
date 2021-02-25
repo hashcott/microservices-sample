@@ -24,16 +24,16 @@ module.exports.contact_post = async (req, res) => {
           }]
         })
         await newUser.save()
-        res.json({ newUser })
+        res.json({ statusCode: 200, message: "api.success", data: newUser })
       }
       user.contact.push({ type, accountName, username, url })
       await user.save()
-      res.json({ user })
+      res.json({ statusCode: 200, message: "api.success", data: user })
     } else {
-      res.status(403).json({ errors: "Account was removed" })
+      res.status(403).json({ statusCode: 403, message: "api.fail", errors: "Account was removed" })
     }
   } catch (error) {
-    res.status(500).json({ errors: error.message })
+    res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
   }
 }
 
@@ -44,10 +44,10 @@ module.exports.contact_get = async (req, res) => {
       const contacts = await User.findOne({ userId })
       res.json({ userId, data: contacts._doc.contact })
     } catch (error) {
-      res.json({ errors: "No data. Please add new contact" })
+      res.status(500).json({ statusCode: 500, message: "api.fail", errors: "No data. Please add new contact" })
     }
   } else {
-    res.status(403).json({ errors: "Account was removed" })
+    res.status(403).json({ statusCode: 403, message: "api.fail", errors: "Account was removed" })
   }
 }
 
@@ -64,20 +64,20 @@ module.exports.contact_put = async (req, res) => {
         });
         if (isInArray) {
           const contactUser = contacts.contact.pull({ _id: idContact })
-          contacts.contact.push({ ...contactUser, type, accountName, username, url, _id : idContact })
+          contacts.contact.push({ ...contactUser, type, accountName, username, url, _id: idContact }, { new: true })
           await contacts.save();
-          res.json({ msg: "Updated contact successfully" })
+          res.json({ statusCode: 200, message: "api.success", data: contacts })
         } else {
-          res.status(400).json({ msg: "Not found contact to update" })
+          res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Not found contact to update" })
         }
       } catch (error) {
-        res.status(500).json({ errors: error.message })
+        res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
       }
     } else {
-      res.status(400).json({ errors: "Please enter id of contact" })
+      res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Please enter id of contact" })
     }
   } else {
-    res.status(403).json({ errors: "Account was removed" })
+    res.status(403).json({ statusCode: 403, message: "api.fail", errors: "Account was removed" })
   }
 }
 
@@ -94,21 +94,21 @@ module.exports.contact_delete = async (req, res) => {
           if (isInArray) {
             contacts.contact.pull({ _id: idContact }, { new: true })
             await contacts.save();
-            res.json({ msg: "Deleted contact successfully" })
+            res.json({statusCode: 200, message: "api.success", data : contacts })
           }
           else {
-            res.status(400).json({ msg: "Not found contact to delete" })
+            res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Not found contact to delete" })
           }
         } else {
-          res.status(401).json({ msg: "Not found users" })
+          res.status(401).json({ statusCode: 401, message: "api.fail",errors : "Not found users" })
         }
       } catch (error) {
-        res.status(500).json({ errors: error.message })
+        res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
       }
     } else {
-      res.status(400).json({ errors: "Please enter id of contact" })
+      res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Please enter id of contact" })
     }
   } else {
-    res.status(403).json({ errors: "Account was removed" })
+    res.status(403).json({ statusCode: 403, message: "api.fail", errors: "Account was removed" })
   }
 }

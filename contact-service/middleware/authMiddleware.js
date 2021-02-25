@@ -8,13 +8,13 @@ const requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, 'hanh-test', (err, decodedToken) => {
       if (err) {
-        res.status(400).json({ errors: "Token is invaid !" });
+        res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Token is invaid !" });
       } else {
         next();
       }
     });
   } else {
-    res.status(400).json({ errors: "Token not exists !" });
+    res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Token not exists !" });
   }
 };
 
@@ -41,7 +41,7 @@ const checkUser = (req, res, next) => {
           const user = resUser.data;
           res.locals.user = user;
         } catch (error) {
-          res.json({ errors: error.message })
+          res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
         }
         next();
       }
