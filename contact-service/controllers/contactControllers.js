@@ -55,6 +55,7 @@ module.exports.contact_put = async (req, res) => {
   const idContact = req.params?.id;
   const userId = res.locals.user?._id;
   const { type, accountName, username, url } = req.body;
+  console.log(type , accountName, username, url);
   if (userId && isMongoId(userId)) {
     if (idContact && isMongoId(idContact)) {
       try {
@@ -64,7 +65,7 @@ module.exports.contact_put = async (req, res) => {
         });
         if (isInArray) {
           const contactUser = contacts.contact.pull({ _id: idContact })
-          contacts.contact.push({ ...contactUser, type, accountName, username, url, _id: idContact }, { new: true })
+          contacts.contact.push({ ...contactUser, type, accountName, username, url, _id: idContact })
           await contacts.save();
           res.json({ statusCode: 200, message: "api.success", data: contacts })
         } else {
