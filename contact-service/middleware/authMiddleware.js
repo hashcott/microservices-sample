@@ -38,7 +38,7 @@ const checkUser = (req, res, next) => {
               "x-auth-token": `${token}`
             }
           })
-          const user = resUser.data;
+          const user = resUser.data?.data;
           res.locals.user = user;
         } catch (error) {
           res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
