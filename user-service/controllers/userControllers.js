@@ -49,11 +49,11 @@ module.exports.register_post = async (req, res) => {
   try {
     const user = await User.create({ email, password });
     const token = createToken(user._id);
-    res.status(201).json({ token });
+    res.status(201).json({ statusCode: 201, message: "api.success", data: token });
   }
   catch (err) {
     const errors = handleErrors(err);
-    res.status(400).json({ errors });
+    res.status(400).json({ statusCode: 400, message: "api.fail", errors });
   }
 
 }
@@ -64,11 +64,11 @@ module.exports.login_post = async (req, res) => {
   try {
     const user = await User.login(email, password);
     const token = createToken(user._id);
-    res.status(200).json({ token });
+    res.status(200).json({ statusCode: 200, message: "api.success", data: token });
   }
   catch (err) {
     const errors = handleErrors(err);
-    res.status(400).json({ errors });
+    res.status(400).json({ statusCode: 400, message: "api.fail", errors });
   }
 
 }
@@ -95,30 +95,30 @@ module.exports.profile_patch = async (req, res) => {
         dataUpdateUser.phone = phone;
         check++;
       }
-      if(check === 0) {
-        res.status(400).json({ msg: "Please enter some value" })
+      if (check === 0) {
+        res.status(400).json({ statusCode: 400, message: "api.fail", errors : "Please add some value" })
       }
       let user = await User.findByIdAndUpdate(res.locals.user._id, {
         ...dataUpdateUser
       }, { new: true }
       ).select("-password");
-      res.json({ user })
+      res.json({ statusCode: 200, message: "api.success", data : user })
     } else {
-      res.status(401).json({ msg: "Account was removed" });
+      res.status(401).json({ statusCode: 401, message: "api.fail", errors : "Account was removed" });
     }
   }
   catch (err) {
     res.status(500).json({
-      errors: err.message
+      statusCode: 500, message: "api.fail", errors : err.message
     });
   }
 
 }
 module.exports.profile_get = async (req, res) => {
   if (res.locals.user) {
-    res.json({ ...res.locals.user._doc })
+    res.json({ statusCode: 200, message: "api.success", data: res.locals.user._doc })
   } else {
-    res.status(401).json({ msg: "Account was removed" })
+    res.status(401).json({ statusCode: 401, message: "api.fail", errors : "Account was removed" })
   }
 
 }
