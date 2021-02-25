@@ -74,7 +74,7 @@ module.exports.login_post = async (req, res) => {
 }
 
 module.exports.profile_patch = async (req, res) => {
-  const { fullName, bio, address, phone } = req.body;
+  const { fullName, bio, address, phone, avatar } = req.body;
   try {
     if (res.locals.user) {
       let dataUpdateUser = {};
@@ -93,6 +93,10 @@ module.exports.profile_patch = async (req, res) => {
       }
       if (!!phone && !isEmpty(phone)) {
         dataUpdateUser.phone = phone;
+        check++;
+      }
+      if (!!avatar && !isEmpty(avatar)) {
+        dataUpdateUser.avatar = avatar;
         check++;
       }
       if (check === 0) {
