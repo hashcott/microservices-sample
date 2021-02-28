@@ -8,16 +8,25 @@ const requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, 'hanh-test', (err, decodedToken) => {
       if (err) {
-        res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Token is invaid !" });
+        res.status(400).json({
+          statusCode: 400,
+          messageCode: "api.error.auth",
+          message: "Unauthorized",
+          result: "Token is invaid"
+        });
       } else {
         next();
       }
     });
   } else {
-    res.status(400).json({ statusCode: 400, message: "api.fail", errors: "Token not exists !" });
+    res.status(400).json({
+      statusCode: 400,
+      messageCode: "api.error.auth",
+      message: "Unauthorized",
+      result: "Token not exists !"
+    });
   }
 };
-
 // check current user
 const checkUser = (req, res, next) => {
   const token = req.header("x-auth-token");
@@ -30,7 +39,9 @@ const checkUser = (req, res, next) => {
         try {
           let services = await consul.lookupServiceWithConsul();
           const userService = services["user-service"]
-          const serverService = { ...userService }
+          const serverService = {
+            ...userService
+          }
 
           const addressServer = serverService.Address + ":" + serverService.Port
           const resUser = await axios.get(`http://${addressServer}/api/v1/users/profile`, {
@@ -38,10 +49,15 @@ const checkUser = (req, res, next) => {
               "x-auth-token": `${token}`
             }
           })
-          const user = resUser.data?.data;
+          const user = resUser.data?.result;
           res.locals.user = user;
         } catch (error) {
-          res.status(500).json({ statusCode: 500, message: "api.fail", errors: error.message })
+          res.status(500).json({
+            statusCode: 500,
+            messageCode: "api.error.response",
+            message: "Internal Server Error",
+            result: error.message
+          })
         }
         next();
       }
@@ -53,4 +69,7 @@ const checkUser = (req, res, next) => {
 };
 
 
-module.exports = { requireAuth, checkUser };
+module.exports = {
+  requireAuth,
+  checkUser
+};

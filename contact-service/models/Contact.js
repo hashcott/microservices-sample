@@ -18,6 +18,11 @@ const socialSchema = new mongoose.Schema({
     url: {
         type: String,
         required: [true, "Please enter url"]
+    },
+    priority : {
+        type: Number,
+        unique: true,
+        required: [true, "Please enter priority"]
     }
     
 })

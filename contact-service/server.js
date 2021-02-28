@@ -1,6 +1,7 @@
 // Dependencies
 const express = require("express")
 const cors = require('cors')
+const bodyParser = require('body-parser')
 const expressWinston = require('express-winston')
 const logger = require('./utils/logger')
 const eventEmitter = require('./utils/events')
@@ -20,6 +21,7 @@ app.use(expressWinston.logger({
 }))
 app.use(cors())
 app.use(express.json());
+app.use(bodyParser.json());
 
 app.use("/api/v1/contacts", contactRoutes)
 
