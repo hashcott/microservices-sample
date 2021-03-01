@@ -9,7 +9,7 @@ const requireAuth = (req, res, next) => {
     jwt.verify(token, 'hanh-test', (err, decodedToken) => {
       if (err) {
         res.status(400).json({
-          statusCode: 400,
+          statusCode: "400",
           messageCode: "api.error.auth",
           message: "Unauthorized",
           result: "Token is invaid"
@@ -20,7 +20,7 @@ const requireAuth = (req, res, next) => {
     });
   } else {
     res.status(400).json({
-      statusCode: 400,
+      statusCode: "400",
       messageCode: "api.error.auth",
       message: "Unauthorized",
       result: "Token not exists !"
@@ -53,7 +53,7 @@ const checkUser = (req, res, next) => {
           res.locals.user = user;
         } catch (error) {
           res.status(500).json({
-            statusCode: 500,
+            statusCode: "500",
             messageCode: "api.error.response",
             message: "Internal Server Error",
             result: error.message

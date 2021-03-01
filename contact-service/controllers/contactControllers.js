@@ -211,20 +211,20 @@ module.exports.contact_delete = async (req, res) => {
             })
             await contacts.save();
             res.json({
-              statusCode: 200,
+              statusCode: "200",
               message: "api.success",
               data: contacts
             })
           } else {
             res.status(400).json({
-              statusCode: 400,
+              statusCode: "400",
               message: "api.fail",
               errors: "Not found contact to delete"
             })
           }
         } else {
           res.status(401).json({
-            statusCode: 401,
+            statusCode: "401",
             message: "api.fail",
             errors: "Not found users"
           })
