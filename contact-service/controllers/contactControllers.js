@@ -133,6 +133,14 @@ module.exports.contact_put = async (req, res) => {
   const contacts = await Contact.findOne({
     userId
   })
+  if(!contacts) {
+     res.status(400).json({
+        statusCode: "400",
+        messageCode: "api.error.server.bad-request",
+        message: "Bad Request",
+        result: "Not found contact to update"
+      })
+  }
   let contactArray = contacts.contact.toObject()
   if(contactsClientKeys?.length !== contactArray.length) {
     res.status(400).json({
@@ -147,7 +155,7 @@ module.exports.contact_put = async (req, res) => {
     try {
       for (let i = 0; i < contactsClientKeys.length; i++) {
         let contactUpdate = contactsClient[contactsClientKeys[i]]
-        let indexUpdate = contactArray.findIndex(contact => contact._id == contactUpdate._id);
+        let indexUpdate = contactArray.findIndex(contact => contact._id == contactsClientKeys[i]);
         contacts.contact[indexUpdate].type = contactUpdate.type
         contacts.contact[indexUpdate].username = contactUpdate.username
         contacts.contact[indexUpdate].accountName = contactUpdate.accountName
