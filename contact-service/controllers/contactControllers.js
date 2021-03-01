@@ -31,12 +31,12 @@ module.exports.contact_post = async (req, res) => {
       if (!contacts) {
         const newContact = new Contact({
           userId,
-          contact: [{
+          contacts: [{
             type,
             accountName,
             username,
             url,
-            priority: user.contact.length
+            priority: contacts.contacts.length
           }]
         })
         await newContact.save()
@@ -47,12 +47,12 @@ module.exports.contact_post = async (req, res) => {
           result: newContact
         })
       }
-      contacts.contact.push({
+      contacts.contacts.push({
         type,
         accountName,
         username,
         url,
-        priority: parseInt(contacts.contact.length)
+        priority: parseInt(contacts.contacts.length)
       })
       await contacts.save()
       res.json({
@@ -89,7 +89,7 @@ module.exports.contact_get = async (req, res) => {
       if(!contacts) {
         const newContact = new Contact({
           userId,
-          contact: []
+          contacts: []
         })
         await newContact.save()
         res.json({
@@ -105,7 +105,7 @@ module.exports.contact_get = async (req, res) => {
         message: "Get contacts of user successfully",
         result: {
           userId,
-          contacts: contacts._doc.contact
+          contacts: contacts._doc.contacts
         }
       })
     } catch (error) {
@@ -141,7 +141,7 @@ module.exports.contact_put = async (req, res) => {
         result: "Not found contact to update"
       })
   }
-  let contactArray = contacts.contact.toObject()
+  let contactArray = contacts.contacts.toObject()
   if(contactsClientKeys?.length !== contactArray.length) {
     res.status(400).json({
       statusCode: "400",
@@ -156,11 +156,11 @@ module.exports.contact_put = async (req, res) => {
       for (let i = 0; i < contactsClientKeys.length; i++) {
         let contactUpdate = contactsClient[contactsClientKeys[i]]
         let indexUpdate = contactArray.findIndex(contact => contact._id == contactsClientKeys[i]);
-        contacts.contact[indexUpdate].type = contactUpdate.type
-        contacts.contact[indexUpdate].username = contactUpdate.username
-        contacts.contact[indexUpdate].accountName = contactUpdate.accountName
-        contacts.contact[indexUpdate].url = contactUpdate.url
-        contacts.contact[indexUpdate].priority = contactUpdate.priority
+        contacts.contacts[indexUpdate].type = contactUpdate.type
+        contacts.contacts[indexUpdate].username = contactUpdate.username
+        contacts.contacts[indexUpdate].accountName = contactUpdate.accountName
+        contacts.contacts[indexUpdate].url = contactUpdate.url
+        contacts.contacts[indexUpdate].priority = contactUpdate.priority
       }
       await contacts.save()
       res.status(201).json({
@@ -200,11 +200,11 @@ module.exports.contact_delete = async (req, res) => {
           userId
         })
         if (contacts) {
-          let isInArray = contacts.contact.some(function (contact) {
+          let isInArray = contacts.contacts.some(function (contact) {
             return contact.equals(idContact);
           });
           if (isInArray) {
-            contacts.contact.pull({
+            contacts.contacts.pull({
               _id: idContact
             }, {
               new: true

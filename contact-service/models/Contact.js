@@ -33,7 +33,7 @@ const contactSchema = new mongoose.Schema({
         require: [true, "Please enter ObjectId User"],
         validate: [isMongoId, 'Please enter a valid ObjectId User !']
     },
-    contact: [
+    contacts: [
         socialSchema
     ]
 })
