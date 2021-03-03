@@ -8,6 +8,8 @@ services:
   node:
     container_name: contact-service
     image: nodeapp-contact
+    volumes: 
+      - ./:/usr/src/app
     build: 
       context: .
       dockerfile: Dockerfile

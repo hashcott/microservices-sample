@@ -36,7 +36,7 @@ module.exports.contact_post = async (req, res) => {
             accountName,
             username,
             url,
-            priority: contacts.contacts.length
+            priority: 0 
           }]
         })
         await newContact.save()
@@ -86,17 +86,12 @@ module.exports.contact_get = async (req, res) => {
       const contacts = await Contact.findOne({
         userId
       })
-      if(!contacts) {
-        const newContact = new Contact({
-          userId,
-          contacts: []
-        })
-        await newContact.save()
+      if(!contacts?.contacts) {
         res.json({
           statusCode: "200",
           messageCode: "api.success",
           message: "Get contacts of user successfully",
-          result: newContact
+          result: "No data of contacts"
         })
       }
       res.json({
