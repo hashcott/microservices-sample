@@ -52,7 +52,7 @@ module.exports.contact_post = async (req, res) => {
         accountName,
         username,
         url,
-        priority: parseInt(contacts.contacts.length)
+        priority: parseInt(contacts.contacts.length)+1
       })
       await contacts.save()
       res.json({
