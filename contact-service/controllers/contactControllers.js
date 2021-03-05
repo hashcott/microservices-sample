@@ -124,7 +124,6 @@ module.exports.contact_get = async (req, res) => {
 module.exports.contact_put = async (req, res) => {
   const userId = res.locals.user?._id;
   const contactsClient = req.body;
-  const contactsClientKeys = Object.keys(contactsClient)
   const contacts = await Contact.findOne({
     userId
   })
@@ -137,7 +136,7 @@ module.exports.contact_put = async (req, res) => {
       })
   }
   let contactArray = contacts.contacts.toObject()
-  if(contactsClientKeys?.length !== contactArray.length) {
+  if(contactsClient?.length !== contactArray.length) {
     res.status(400).json({
       statusCode: "400",
       messageCode: "api.error.server.bad-request",
@@ -148,13 +147,9 @@ module.exports.contact_put = async (req, res) => {
 
   if (userId && isMongoId(userId)) {
     try {
-      for (let i = 0; i < contactsClientKeys.length; i++) {
-        let contactUpdate = contactsClient[contactsClientKeys[i]]
-        let indexUpdate = contactArray.findIndex(contact => contact._id == contactsClientKeys[i]);
-        contacts.contacts[indexUpdate].type = contactUpdate.type
-        contacts.contacts[indexUpdate].username = contactUpdate.username
-        contacts.contacts[indexUpdate].accountName = contactUpdate.accountName
-        contacts.contacts[indexUpdate].url = contactUpdate.url
+      for (let i = 0; i < contactsClient.length; i++) {
+        let contactUpdate = contactsClient[i]
+        let indexUpdate = contactArray.findIndex(contact => contact._id == contactUpdate.id);
         contacts.contacts[indexUpdate].priority = contactUpdate.priority
       }
       await contacts.save()
@@ -184,6 +179,64 @@ module.exports.contact_put = async (req, res) => {
     })
   }
 }
+
+module.exports.contact_put_one = async (req, res) => {
+  const idContact = req.params?.id;
+  const userId = res.locals.user?._id;
+  const {
+    type,
+    accountName,
+    username,
+    url
+  } = req.body;
+  if (userId && isMongoId(userId)) {
+    if (idContact && isMongoId(idContact)) {
+      try {
+        const contacts = await Contact.findOne({
+          userId
+        })
+        let contactArray = contacts.contacts.toObject()
+        let indexUpdate = contactArray.findIndex(contact => contact._id == idContact);
+        contacts.contacts[indexUpdate].type = type;
+        contacts.contacts[indexUpdate].accountName = accountName;
+        contacts.contacts[indexUpdate].username = username;
+        contacts.contacts[indexUpdate].url = url;
+        await contacts.save();
+        res.status(201).json({
+          statusCode: "201",
+          messageCode: "api.success",
+          message: "Update contacts of user successfully",
+          result: {
+            userId,
+            contacts: contacts
+          }
+        })
+      } catch (error) {
+        res.status(400).json({
+          statusCode: "400",
+          messageCode: "api.error.server.bad-request",
+          message: "Bad Request",
+          result: error.message
+        })
+      }
+    } else {
+      res.status(400).json({
+        statusCode: "400",
+        messageCode: "api.error.server.bad-request",
+        message: "Bad Request",
+        result: "Not found contact to update"
+      })
+    }
+  } else {
+    res.status(403).json({
+      statusCode: "403",
+      messageCode: "api.error.auth.suspended",
+      message: "Account was removed",
+      result: "Account was removed. Please contact with admin to support"
+    })
+  }
+}
+
 
 module.exports.contact_delete = async (req, res) => {
   const idContact = req.params?.id;
